@@ -1,50 +1,61 @@
 // animation.js — updated to exclude gear animation logic (handled in gears.js)
+// animation.js — Safe DOM-ready version
 
 (function animateHourglass() {
     const svg = document.querySelector("svg");
     if (!svg) return console.warn("SVG not found");
 
-    const topSand = svg.getElementById("topSand");
-    const bottomSand = svg.getElementById("bottomSand");
-    const sandFall = svg.getElementById("sandFall");
+    function waitForElements() {
+        const topSand = svg.getElementById("topSand");
+        const bottomSand = svg.getElementById("bottomSand");
+        const sandFall = svg.getElementById("sandFall");
 
-    const DURATION = 60 * 1000;
-    let startTime = null;
-    let flipped = false;
+        if (!topSand || !bottomSand || !sandFall) {
+            requestAnimationFrame(waitForElements); // wait until they exist
+            return;
+        }
 
-    function animate(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-        const progress = (elapsed % DURATION) / DURATION;
+        startAnimation(topSand, bottomSand, sandFall);
+    }
 
-        // Animate sand levels
-        const topMaxHeight = 80;
-        const bottomMaxHeight = 80;
-        const topHeight = (1 - progress) * topMaxHeight;
-        const bottomHeight = progress * bottomMaxHeight;
+    function startAnimation(topSand, bottomSand, sandFall) {
+        const DURATION = 60 * 1000;
+        let startTime = null;
+        let flipped = false;
 
-        topSand.setAttribute("height", topHeight);
-        topSand.setAttribute("y", 260 + (topMaxHeight - topHeight));
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = (elapsed % DURATION) / DURATION;
 
-        bottomSand.setAttribute("height", bottomHeight);
-        bottomSand.setAttribute("y", 360 - bottomHeight);
+            const topMaxHeight = 80;
+            const bottomMaxHeight = 80;
 
-        // Animate falling stream
-        const opacity = Math.sin(progress * Math.PI);
-        sandFall.setAttribute("opacity", opacity.toFixed(2));
+            const topHeight = (1 - progress) * topMaxHeight;
+            const bottomHeight = progress * bottomMaxHeight;
 
-        // Flip the hourglass every cycle
-        if (elapsed % DURATION > DURATION - 100 && !flipped) {
-            flipped = true;
-            svg.style.transition = "transform 1s ease-in-out";
-            svg.style.transformOrigin = "400px 400px";
-            svg.style.transform = svg.style.transform === "rotate(180deg)" ? "rotate(0deg)" : "rotate(180deg)";
-        } else if (elapsed % DURATION < 100) {
-            flipped = false;
+            topSand.setAttribute("height", topHeight);
+            topSand.setAttribute("y", 260 + (topMaxHeight - topHeight));
+
+            bottomSand.setAttribute("height", bottomHeight);
+            bottomSand.setAttribute("y", 360 - bottomHeight);
+
+            sandFall.setAttribute("opacity", Math.sin(progress * Math.PI).toFixed(2));
+
+            if (elapsed % DURATION > DURATION - 100 && !flipped) {
+                flipped = true;
+                svg.style.transition = "transform 1s ease-in-out";
+                svg.style.transformOrigin = "400px 400px";
+                svg.style.transform = svg.style.transform === "rotate(180deg)" ? "rotate(0deg)" : "rotate(180deg)";
+            } else if (elapsed % DURATION < 100) {
+                flipped = false;
+            }
+
+            requestAnimationFrame(animate);
         }
 
         requestAnimationFrame(animate);
     }
 
-    requestAnimationFrame(animate);
+    waitForElements();
 })();
