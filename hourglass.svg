@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 800 800"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   >
+  <defs>
+    <!-- Mechanical cogwheel shape -->
+    <g id="cogwheel">
+      <circle cx="100" cy="100" r="70" fill="#555" stroke="#ccc" stroke-width="8"/>
+      <g stroke="#ccc" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" fill="none">
+        <circle cx="100" cy="100" r="50"/>
+        <circle cx="100" cy="100" r="20"/>
+        <line x1="100" y1="30" x2="100" y2="10"/>
+        <line x1="100" y1="190" x2="100" y2="170"/>
+        <line x1="30" y1="100" x2="10" y2="100"/>
+        <line x1="190" y1="100" x2="170" y2="100"/>
+        <line x1="45" y1="45" x2="30" y2="30"/>
+        <line x1="155" y1="45" x2="170" y2="30"/>
+        <line x1="45" y1="155" x2="30" y2="170"/>
+        <line x1="155" y1="155" x2="170" y2="170"/>
+      </g>
+    </g>
+
+    <!-- Sand shape -->
+    <linearGradient id="sandGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D2B48C" />
+      <stop offset="100%" stop-color="#B8860B" />
+    </linearGradient>
+
+    <!-- Glass frame -->
+    <filter id="glass" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#FFF" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Background cogwheels -->
+  <g id="background-cogs" transform="translate(400 400)">
+    <use href="#cogwheel" transform="translate(-200,-200) scale(0.8)" />
+    <use href="#cogwheel" transform="translate(150,-150) scale(0.5)" />
+    <use href="#cogwheel" transform="translate(-150,150) scale(0.6)" />
+    <use href="#cogwheel" transform="translate(200,200) scale(0.7)" />
+  </g>
+
+  <!-- Mechanical hourglass -->
+  <g id="hourglass" transform="translate(400 400)">
+    <!-- Outer Frame -->
+    <rect x="-100" y="-250" width="200" height="500" rx="40" ry="40" fill="#333" stroke="#bbb" stroke-width="10" />
+    <!-- Decorative mechanical edges -->
+    <path d="M -100 -250 L -140 -300 L -140 300 L -100 250" fill="#444" />
+    <path d="M 100 -250 L 140 -300 L 140 300 L 100 250" fill="#444" />
+    <!-- Glass area -->
+    <ellipse cx="0" cy="0" rx="80" ry="150" fill="#a9cce3" fill-opacity="0.15" filter="url(#glass)" />
+    
+    <!-- Sand top -->
+    <clipPath id="clip-top-sand">
+      <path id="topSandShape" d="M -70,-140 Q 0,-90 70,-140 L 70,-250 L -70,-250 Z" />
+    </clipPath>
+    <rect id="topSand" x="-70" y="-250" width="140" height="140" fill="url(#sandGradient)" clip-path="url(#clip-top-sand)" />
+
+    <!-- Sand falling -->
+    <path id="sandFall" d="M 0,-90 L 8,-30 L -8,-30 Z" fill="url(#sandGradient)" opacity="0.8" />
+
+    <!-- Sand bottom -->
+    <clipPath id="clip-bottom-sand">
+      <path id="bottomSandShape" d="M -70,140 Q 0,90 70,140 L 70,250 L -70,250 Z" />
+    </clipPath>
+    <rect id="bottomSand" x="-70" y="90" width="140" height="160" fill="url(#sandGradient)" clip-path="url(#clip-bottom-sand)" />
+  </g>
+</svg>
