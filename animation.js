@@ -1,21 +1,31 @@
-// animation.js — updated to exclude gear animation logic (handled in gears.js)
-// animation.js — Safe DOM-ready version
-
 (function animateHourglass() {
     const svg = document.querySelector("svg");
     if (!svg) return console.warn("SVG not found");
 
-    function waitForElements() {
-        const topSand = svg.getElementById("topSand");
-        const bottomSand = svg.getElementById("bottomSand");
-        const sandFall = svg.getElementById("sandFall");
+    function getParts() {
+        return {
+            topSand: svg.querySelector("#topSand"),
+            bottomSand: svg.querySelector("#bottomSand"),
+            sandFall: svg.querySelector("#sandFall"),
+        };
+    }
 
-        if (!topSand || !bottomSand || !sandFall) {
-            requestAnimationFrame(waitForElements); // wait until they exist
-            return;
+    function waitForSVGElements(readyCallback) {
+        const observer = new MutationObserver(() => {
+            const { topSand, bottomSand, sandFall } = getParts();
+            if (topSand && bottomSand && sandFall) {
+                observer.disconnect();
+                readyCallback(topSand, bottomSand, sandFall);
+            }
+        });
+        observer.observe(svg, { childList: true, subtree: true });
+
+        // Also check immediately in case DOM is already ready
+        const { topSand, bottomSand, sandFall } = getParts();
+        if (topSand && bottomSand && sandFall) {
+            observer.disconnect();
+            readyCallback(topSand, bottomSand, sandFall);
         }
-
-        startAnimation(topSand, bottomSand, sandFall);
     }
 
     function startAnimation(topSand, bottomSand, sandFall) {
@@ -46,7 +56,8 @@
                 flipped = true;
                 svg.style.transition = "transform 1s ease-in-out";
                 svg.style.transformOrigin = "400px 400px";
-                svg.style.transform = svg.style.transform === "rotate(180deg)" ? "rotate(0deg)" : "rotate(180deg)";
+                svg.style.transform =
+                    svg.style.transform === "rotate(180deg)" ? "rotate(0deg)" : "rotate(180deg)";
             } else if (elapsed % DURATION < 100) {
                 flipped = false;
             }
@@ -57,5 +68,5 @@
         requestAnimationFrame(animate);
     }
 
-    waitForElements();
+    waitForSVGElements(startAnimation);
 })();
